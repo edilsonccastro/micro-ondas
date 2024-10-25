@@ -48,7 +48,13 @@
     if (emExecucao.value) {
 
       if (estaPausado.value) {
-        estaPausado.value = false
+        chamarAPI("iniciar")
+        intervalId = setInterval(
+        () => {
+          chamarAPI("status")
+        },
+        1000);
+      // estaPausado.value = false
       } else {
         tempo.value = String(Number(tempo.value)+30)
       }
@@ -62,7 +68,7 @@
       if (potencia.value.trim() == '')
         potencia.value = "10"
       if ((!ehInteiro(potencia.value)) || (Number(potencia.value) < 1) || (Number(potencia.value) > 10))
-        erros.value.push("A potência deve ser um número inteiro entre 0 e 10")
+        erros.value.push("A potência deve ser um número inteiro entre 1 e 10")
 
       if (tempo.value.trim() == '')
         tempo.value = "30"
@@ -90,7 +96,7 @@
 
     if (emExecucao.value) {
 
-
+      chamarAPI("pausarOuCancelar")
 
     }
 
@@ -100,19 +106,24 @@
 
     console.log(JSON.stringify(newResp))
 
-    emExecucao.value = newResp.status == "ATIVO"
-
-    forno.value = newResp.alimento
-    tempo.value = String(newResp.tempoRestante)
+    emExecucao.value = newResp.status != "INATIVO"
+    estaPausado.value = newResp.status == "PAUSADO"
 
     if (emExecucao.value) {
+      forno.value = newResp.alimento
+      tempo.value = String(newResp.tempoRestante)
+    }
 
-    } else {
+    if (!emExecucao.value || estaPausado.value) {
       console.log("clearInterval")
       clearInterval(intervalId)
     }
 
-  })
+    if (!emExecucao.value) {
+      tempo.value = ""
+      potencia.value = ""
+    }
+})
 
 </script>
 

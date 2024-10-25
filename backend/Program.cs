@@ -60,6 +60,15 @@ app.MapGet("/iniciar", (HttpRequest request) =>
 .WithName("GetIniciar")
 .WithOpenApi();
 
+app.MapGet("/pausarOuCancelar", () =>
+{
+    microOndas.PausarOuCancelar();
+    
+    return microOndas.Status();
+})
+.WithName("GetPausarOuCancelar")
+.WithOpenApi();
+
 app.MapGet("/status", () =>
 {
     return microOndas.Status();

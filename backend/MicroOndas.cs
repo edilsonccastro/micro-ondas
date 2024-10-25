@@ -59,6 +59,9 @@ public class MicroOndas
             this.MontarStringAquecimento();
             this.alimento = "";
             this.status = "ATIVO";
+        } else if (this.status == "PAUSADO") {
+            this.horaInicio += DateTime.Now - this.horaPausa;
+            this.status = "ATIVO";
         } else {
             this.tempo = tempo + 30;
         }
@@ -87,15 +90,21 @@ public class MicroOndas
         } else if (agora >= horaInicio.AddSeconds(this.tempo)) {
 
             if (this.status == "ATIVO") {
-                this.alimento += " Aquecimento concluído";
+                this.alimento += "\nAquecimento concluído";
                 this.status = "INATIVO";
             }
 
             tempoRestante = this.tempo;
 
         } else {
+            int tempoDecorrido;
 
-            int tempoDecorrido = Convert.ToInt32(agora.Subtract(this.horaInicio).TotalSeconds);
+            if (this.status == "PAUSADO") {
+                tempoDecorrido = Convert.ToInt32(this.horaPausa.Subtract(this.horaInicio).TotalSeconds);
+            } else {
+                tempoDecorrido = Convert.ToInt32(agora.Subtract(this.horaInicio).TotalSeconds);
+            }
+
             tempoRestante = this.tempo - tempoDecorrido;
             this.alimento = this.aquecimento.Substring(0, (potencia+1) * tempoDecorrido);
         }
