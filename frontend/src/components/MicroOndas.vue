@@ -47,16 +47,15 @@
 
     if (emExecucao.value) {
 
+      chamarAPI("iniciar")
+
       if (estaPausado.value) {
-        chamarAPI("iniciar")
         intervalId = setInterval(
         () => {
           chamarAPI("status")
         },
         1000);
       // estaPausado.value = false
-      } else {
-        tempo.value = String(Number(tempo.value)+30)
       }
 
     } else {
@@ -81,7 +80,7 @@
         return false
 
       if (tempoInt >= 60)
-        tempo.value = converterTempo(tempo.value)
+        tempo.value = converterTempo(tempoInt)
 
       chamarAPI("iniciar?potencia=" + potencia.value + "&tempo=" + tempo.value)
       intervalId = setInterval(
@@ -109,20 +108,18 @@
     emExecucao.value = newResp.status != "INATIVO"
     estaPausado.value = newResp.status == "PAUSADO"
 
-    if (emExecucao.value) {
-      forno.value = newResp.alimento
-      tempo.value = String(newResp.tempoRestante)
-    }
+    forno.value = newResp.alimento
+    let tempoInt = newResp.tempoRestante
+    if (tempoInt >= 60)
+        tempo.value = converterTempo(tempoInt)
+    else
+        tempo.value = String(newResp.tempoRestante)
 
     if (!emExecucao.value || estaPausado.value) {
       console.log("clearInterval")
       clearInterval(intervalId)
     }
 
-    if (!emExecucao.value) {
-      tempo.value = ""
-      potencia.value = ""
-    }
 })
 
 </script>

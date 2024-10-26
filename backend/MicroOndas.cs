@@ -63,7 +63,9 @@ public class MicroOndas
             this.horaInicio += DateTime.Now - this.horaPausa;
             this.status = "ATIVO";
         } else {
-            this.tempo = tempo + 30;
+            this.tempo = this.tempo + 30;
+            if (this.tempo > this.tempoMax)
+                this.tempo = this.tempoMax;
         }
 
     }
@@ -87,10 +89,10 @@ public class MicroOndas
             this.status = "INATIVO";
             tempoRestante = this.tempo;
 
-        } else if (agora >= horaInicio.AddSeconds(this.tempo)) {
+        } else if (agora > horaInicio.AddSeconds(this.tempo)) {
 
             if (this.status == "ATIVO") {
-                this.alimento += "\nAquecimento concluído";
+                this.alimento += " Aquecimento concluído";
                 this.status = "INATIVO";
             }
 
